@@ -1,0 +1,58 @@
+Analiza Incydentu Bezpieczeństwa — LastPass
+
+1. Nazwa incydentu
+Naruszenie danych LastPass (2022) — dwuetapowy atak na środowisko deweloperskie i kopie zapasowe w chmurze**
+
+2. Organizacja i rok
+LastPass, data ujawnienia incydentu: 22.12.2022
+
+3. Profil atakującego
+Cyberprzestępcy — tożsamość atakującego oraz jego motywacja pozostają nieznane. Nie było żadnego kontaktu ani żądań ze strony sprawcy, a służby bezpieczeństwa nie wykryły aktywności wskazującej na sprzedaż lub marketing skradzionych danych w firmie.
+
+Brak podstaw, by zaklasyfikować jako APT (brak powiązań państwowych). Nie był to insider ani awaria — był to celowy atak zewnętrzny.
+
+4. Wektor wejścia
+Dwa wektory — w dwóch oddzielnych incydentach:
+- Incydent 1: Skompromitowany laptop firmowy inżyniera oprogramowania, co umożliwiło atakującemu uzyskanie dostępu do środowiska deweloperskiego w chmurze.
+
+- Incydent 2: Atakujący obrał za cel starszego inżyniera DevOps, wykorzystując podatność w oprogramowaniu zewnętrznym, aby dostarczyć złośliwe oprogramowanie i ominąć istniejące zabezpieczenia.
+
+5. Cel działania
+- Kradzież kodu źródłowego i wewnętrznych sekretów (Incydent 1)
+- Uzyskanie dostępu do chmurowych kopii zapasowych zawierających dane klientów (Incydent 2)
+- Zdobycie zaszyfrowanych haseł użytkowników oraz danych konfiguracyjnych i integracyjnych
+
+6. Naruszone elementy CIA
+Poufność - TAK - kradziono kod źródłowy, sekrety wewnętrzne, dane klientów, kopie danych, hasła, dane bazy MFA
+Integralność - Brak danych - Artykuł nie wskazuje na modyfikację danych
+Dostępność - Brak danych - Artykuł nie opisuje zakłócenia dostępu do usługi
+
+7. Cyber Kill Chain
+Etap - Co wydarzyło się w incydencie?
+Reconnaissance - Brak danych — artykuł nie opisuje fazy rozpoznania. Wiadomo jedynie, że informacje z Incydentu 1 posłużyły do identyfikacji celów dla Incydentu 2.
+Weaponization - Atakujący przygotował złośliwe oprogramowanie (malware) dostosowane do exploitowania podatności w oprogramowaniu zewnętrznym używanym przez inżyniera DevOps.
+Delivery - Incydent 1: Skompromitowanie laptopa firmowego inżyniera. Incydent 2: Dostarczenie malware'u przez podatność w oprogramowaniu zewnętrznym do stacji roboczej inżyniera DevOps. 
+Exploitation - Wykorzystanie podatności w zewnętrznym oprogramowaniu zainstalowanym na komputerze pracownika.
+Installation - Zainstalowanie złośliwego oprogramowania na urządzeniu inżyniera DevOps, utrzymanie dostępu.
+Command & Control - Brak danych — artykuł nie opisuje kanałów C2 używanych przez atakującego.
+Actions on Objectives - Kradzież kodu źródłowego, sekretów i certyfikatów (Incydent 1). Uzyskanie dostępu do chmurowych kopii zapasowych i eksfiltracja danych klientów, sekretów DevOps, danych bazy MFA (Incydent 2).
+
+8. Co poszło nie tak po stronie obrońców?
+Brak izolacji środowisk — dane deweloperskie, sekrety i kopie zapasowe były dostępne bez wystarczającej segmentacji.
+Nadmierne uprawnienia — inżynier DevOps miał dostęp do chmurowych kopii zapasowych zawierających krytyczne dane; naruszenie jednego konta wystarczyło do dotarcia do nich.
+Klucz deszyfrujący przy danych — baza MFA była zaszyfrowana, ale klucz deszyfrujący był przechowywany osobno i został skradziony przez atakującego podczas Incydentu 2. Klucz i dane nie powinny być dostępne z tego samego miejsca.
+Opóźniona komunikacja — LastPass przyjął krytykę dotyczącą zbyt rzadkiej i niewystarczającej komunikacji z klientami w trakcie całego procesu.
+Podatne oprogramowanie zewnętrzne — brak odpowiedniej kontroli nad oprogramowaniem instalowanym na urządzeniach pracowników z uprzywilejowanym dostępem.
+
+9. Gdzie można było przerwać incydent?
+Po Incydencie 1 — gdyby sekrety i klucze zostały szybciej unieważnione i gdyby przeprowadzono dokładniejszy audyt, atakujący nie mógłby użyć zdobytych informacji do zaplanowania Incydentu 2.
+Zasada najmniejszych uprawnień — ograniczenie dostępu inżyniera DevOps tylko do niezbędnych zasobów uniemożliwiłoby lub znacznie utrudniło dostęp do kopii zapasowych.
+Separacja klucza od danych — przechowywanie klucza deszyfrującego bazę MFA w oddzielnym, silniej chronionym miejscu uniemożliwiłoby jego kradzież.
+Kontrola oprogramowania zewnętrznego — regularne audyty i zarządzanie podatnościami oprogramowania używanego przez pracowników z dostępem uprzywilejowanym pozwoliłoby zablokować wektor ataku w Incydencie 2.
+
+10. Trzy rekomendacje bezpieczeństwa:
+1. Zasada najmniejszych uprawnień (Least Privilege) — każdy pracownik i system powinien mieć dostęp wyłącznie do zasobów niezbędnych do wykonywania swoich zadań. Dostęp do kopii zapasowych z danymi klientów powinien być ograniczony i ściśle monitorowany.
+
+2. Separacja kluczy kryptograficznych od chronionych danych — klucze deszyfrujące nie powinny być przechowywane w tym samym środowisku co zaszyfrowane dane. Należy stosować dedykowane systemy zarządzania kluczami (HSM, KMS) z oddzielną kontrolą dostępu.
+
+3. Zarządzanie podatnościami na urządzeniach pracowników z dostępem uprzywilejowanym — regularne skanowanie i aktualizowanie oprogramowania zewnętrznego, szczególnie na komputerach pracowników mających dostęp do krytycznych systemów. W razie potrzeby stosowanie stacji roboczych o podwyższonym poziomie bezpieczeństwa (PAW — Privileged Access Workstations).
