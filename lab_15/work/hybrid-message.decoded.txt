@@ -1,0 +1,4 @@
+To jest testowa poufna wiadomość do laboratorium z kryptografii.
+Nie zawiera prawdziwych sekretów, haseł ani danych osobowych.
+Cel: sprawdzić kodowanie, hashowanie, szyfrowanie symetryczne, RSA i model hybrydowy.
+
